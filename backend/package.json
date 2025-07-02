@@ -1,0 +1,32 @@
+{
+  "name": "rag-chatbot",
+  "version": "1.0.0",
+  "description": "A RAG application chatbot.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZVKubajak/rag-chatbot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ZVKubajak/rag-chatbot/issues"
+  },
+  "homepage": "https://github.com/ZVKubajak/rag-chatbot#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
+    "dotenv": "^17.0.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.14.1",
+    "express": "^5.1.0"
+  }
+}
