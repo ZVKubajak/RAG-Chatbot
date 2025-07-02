@@ -25,7 +25,7 @@ export const getAllPoints = async (_req: Request, res: Response) => {
 
       offset = next_page_offset;
       hasMore = !!offset;
-      allPoints.push(points);
+      allPoints.push(...points);
     }
 
     if (allPoints.length === 0) {
