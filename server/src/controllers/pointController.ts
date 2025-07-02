@@ -92,6 +92,28 @@ export const uploadPoint = async (req: Request, res: Response) => {
     await fs.unlink(tempPath);
     await fs.rm(tempDir, { recursive: true });
 
+    // const splitChunks = (text: string) => {
+    //   const chunks = [];
+    //   let start = 0;
+
+    //   while (start < text.length) {
+    //     let end = start + 4000;
+
+    //     if (end < text.length) {
+    //       const lastNewline = text.lastIndexOf("\n", end);
+    //       if (lastNewline > start) {
+    //         end = lastNewline + 1;
+    //       }
+    //     }
+    //     chunks.push(text.slice(start, end).trim());
+    //     start = end;
+    //   }
+
+    //   return chunks;
+    // };
+
+    // const chunks = splitChunks()
+
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: content,

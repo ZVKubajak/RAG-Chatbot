@@ -1,0 +1,32 @@
+{
+  "name": "rag-chatbot",
+  "version": "1.0.0",
+  "description": "A RAG application chatbot.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run client:build && npm run server",
+    "start:dev": "concurrently \"npm run server:dev\" \"wait-on tcp:3001 && npm run client:dev\"",
+    "server": "cd server && npm start && cd ..",
+    "server:dev": "cd server && npm run dev",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "client:build": "cd client && npm run build",
+    "client:dev": "cd client && npm run dev",
+    "build": "cd server && npm run build",
+    "render-build": "npm install && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZVKubajak/rag-chatbot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ZVKubajak/rag-chatbot/issues"
+  },
+  "homepage": "https://github.com/ZVKubajak/rag-chatbot#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
