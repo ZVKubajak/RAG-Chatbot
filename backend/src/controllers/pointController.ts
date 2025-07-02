@@ -6,6 +6,8 @@ import os from "os";
 import fs from "fs/promises";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { Payload } from "../schema/payloadSchema";
+import { idSchema } from "../schema/idSchema";
 
 export const getAllPoints = async (_req: Request, res: Response) => {
   try {
@@ -38,16 +40,15 @@ export const getAllPoints = async (_req: Request, res: Response) => {
 };
 
 export const getPointById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) {
-    res.status(404).json({ message: "No ID provided." });
+  const parsedId = idSchema.safeParse(req.params.id);
+  if (!parsedId.success) {
+    res.status(400).json({ message: "Request Parsing Error" });
     return;
   }
 
   try {
     const points = await qdrant.retrieve(collectionName, {
-      ids: [id],
+      ids: [parsedId.data],
       with_payload: true,
       with_vector: true,
     });
@@ -89,7 +90,7 @@ export const uploadPoint = async (req: Request, res: Response) => {
     }
 
     await fs.unlink(tempPath);
-    await fs.rmdir(tempDir, { recursive: true });
+    await fs.rm(tempDir, { recursive: true });
 
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
@@ -99,17 +100,19 @@ export const uploadPoint = async (req: Request, res: Response) => {
     const vector = embeddingResponse.data[0].embedding;
     const id = uuidv4();
 
+    const payload: Payload = {
+      content,
+      name: originalname,
+      type: mimetype,
+      size,
+    };
+
     const point = await qdrant.upsert(collectionName, {
       points: [
         {
           id,
           vector,
-          payload: {
-            name: originalname,
-            content: content,
-            mimetype: mimetype,
-            size: size,
-          },
+          payload,
         },
       ],
     });

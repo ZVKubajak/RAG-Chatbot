@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import qdrant, { collectionName } from "./config/qdrant";
-import routes from "./routes/api";
+import routes from "./routes/index";
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ const initializeCollection = async () => {
       console.log(`Creating collection "${collectionName}"...`);
       await qdrant.createCollection(collectionName, {
         vectors: {
-          size: 384,
+          size: 1536,
           distance: "Cosine",
         },
       });
