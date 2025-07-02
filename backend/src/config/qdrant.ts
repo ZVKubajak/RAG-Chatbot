@@ -1,8 +1,13 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
+import dotenv from "dotenv";
 
-const client = new QdrantClient({
+dotenv.config()
+
+const qdrant = new QdrantClient({
   url: process.env.QDRANT_URL!,
   apiKey: process.env.QDRANT_API_KEY!,
 });
 
-export default client;
+export const collectionName = "vector_demo";
+
+export default qdrant;

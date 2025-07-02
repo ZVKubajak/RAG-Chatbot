@@ -4,7 +4,9 @@
   "description": "A RAG application chatbot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --watch src --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -19,14 +21,25 @@
   },
   "homepage": "https://github.com/ZVKubajak/rag-chatbot#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.0.10",
+    "@types/pdf-parse": "^1.1.5",
     "dotenv": "^17.0.1",
+    "nodemon": "^3.1.10",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@qdrant/js-client-rest": "^1.14.1",
-    "express": "^5.1.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mammoth": "^1.9.1",
+    "multer": "^2.0.1",
+    "openai": "^5.8.2",
+    "pdf-parse": "^1.1.1",
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
   }
 }
