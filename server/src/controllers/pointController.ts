@@ -8,6 +8,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { Payload } from "../schema/payloadSchema";
 import { idSchema } from "../schema/idSchema";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 export const getAllPoints = async (_req: Request, res: Response) => {
   try {
@@ -75,7 +76,7 @@ export const uploadPoint = async (req: Request, res: Response) => {
 
   try {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "upload-"));
-    const ext = path.extname(originalname) || "";
+    const ext = path.extname(originalname);
     const tempPath = path.join(tempDir, Date.now() + ext);
     await fs.writeFile(tempPath, buffer);
 
@@ -92,54 +93,43 @@ export const uploadPoint = async (req: Request, res: Response) => {
     await fs.unlink(tempPath);
     await fs.rm(tempDir, { recursive: true });
 
-    // const splitChunks = (text: string) => {
-    //   const chunks = [];
-    //   let start = 0;
-
-    //   while (start < text.length) {
-    //     let end = start + 4000;
-
-    //     if (end < text.length) {
-    //       const lastNewline = text.lastIndexOf("\n", end);
-    //       if (lastNewline > start) {
-    //         end = lastNewline + 1;
-    //       }
-    //     }
-    //     chunks.push(text.slice(start, end).trim());
-    //     start = end;
-    //   }
-
-    //   return chunks;
-    // };
-
-    // const chunks = splitChunks()
-
-    const embeddingResponse = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: content,
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+      keepSeparator: true,
     });
 
-    const vector = embeddingResponse.data[0].embedding;
-    const id = uuidv4();
+    const docs = await splitter.createDocuments([content]);
+    const points = [];
 
-    const payload: Payload = {
-      content,
-      name: originalname,
-      type: mimetype,
-      size,
-    };
+    for (const doc of docs) {
+      const embeddingResponse = await openai.embeddings.create({
+        model: "text-embedding-3-small",
+        input: doc.pageContent,
+      });
 
-    const point = await qdrant.upsert(collectionName, {
-      points: [
-        {
-          id,
-          vector,
-          payload,
+      const vector = embeddingResponse.data[0].embedding;
+      const id = uuidv4();
+
+      const payload: Payload = {
+        content: doc.pageContent,
+        chars: doc.pageContent.length,
+        family: {
+          name: originalname,
+          type: mimetype,
+          size,
         },
-      ],
-    });
+      };
 
-    res.status(201).json(point);
+      points.push({
+        id,
+        vector,
+        payload,
+      });
+    }
+
+    const upsertResponse = await qdrant.upsert(collectionName, { points });
+    res.status(201).json(upsertResponse);
   } catch (error) {
     console.error("Error uploading point:", error);
     res.status(500).json({ message: "Internal Server Error" });

@@ -32,6 +32,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@langchain/textsplitters": "^0.1.0",
     "@qdrant/js-client-rest": "^1.14.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",

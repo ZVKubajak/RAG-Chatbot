@@ -53,19 +53,9 @@ export const chat = async (req: Request, res: Response) => {
           content: `Context Snippet #${i + 1}:\n\n${context}`,
         })),
       ],
-      stream: true,
     });
 
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    for await (const chunk of response) {
-      const token = chunk.choices[0].delta.content;
-      if (token) res.write(token);
-    }
-
-    res.end();
+    res.status(200).json(response.choices[0].message.content);
   } catch (error) {
     console.log("Error AI chat:", error);
     res.status(500).json({ message: "Internal Server Error" });
