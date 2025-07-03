@@ -1,4 +1,5 @@
 import { ArrowRight, Sparkles, Zap, Heart } from "lucide-react";
+import ChatbotWidget from "./components/ChatBotWidget";
 
 const App = () => {
   return (
@@ -117,6 +118,9 @@ const App = () => {
           <div className="text-gray-400 text-sm">© 2025 Demo Application</div>
         </div>
       </footer>
+
+      {/* chatbot widget */}
+      <ChatbotWidget />
     </div>
   );
 };
