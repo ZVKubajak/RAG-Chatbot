@@ -3,7 +3,9 @@ import upload from "../../config/upload";
 import {
   getAllPoints,
   getPointById,
-  uploadPoint,
+  uploadPointsByFile,
+  uploadPointsByWebpage,
+  uploadPointsByWebsite,
 } from "../../controllers/pointController";
 
 const router = Router();
@@ -14,7 +16,13 @@ router.get("/", getAllPoints);
 // Get point by ID.
 router.get("/:id", getPointById);
 
-// Upload point
-router.post("/", upload.single("file"), uploadPoint);
+// Upload point via file.
+router.post("/file", upload.single("file"), uploadPointsByFile);
+
+// Upload points via webpage.
+router.post("/webpage", uploadPointsByWebpage);
+
+// Upload points via website.
+router.post("/website", uploadPointsByWebsite);
 
 export { router as pointRouter };

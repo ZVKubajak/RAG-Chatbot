@@ -34,12 +34,16 @@
   "dependencies": {
     "@langchain/textsplitters": "^0.1.0",
     "@qdrant/js-client-rest": "^1.14.1",
+    "cheerio": "^1.1.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "mammoth": "^1.9.1",
     "multer": "^2.0.1",
     "openai": "^5.8.2",
     "pdf-parse": "^1.1.1",
+    "puppeteer": "^24.11.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "uuid": "^11.1.0",
     "xlsx": "^0.18.5",
     "zod": "^3.25.67"
