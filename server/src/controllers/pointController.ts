@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 import qdrant, { collectionName } from "../config/qdrant";
 import openai from "../config/openai";
-import extractTextFromFile from "../helpers/fileHelper";
 import os from "os";
 import fs from "fs/promises";
 import path from "path";
+import extractFile from "../helpers/extractFile";
+import scrapeWebsite from "../helpers/scrapeSite";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { v4 as uuidv4 } from "uuid";
 import { Payload } from "../schema/payloadSchema";
 import { idSchema } from "../schema/idSchema";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import websiteSchema from "../schema/websiteSchema";
-import scrapeWebsite from "../helpers/scrapeWebsite";
+import urlSchema from "../schema/urlSchema";
 
 export const getAllPoints = async (_req: Request, res: Response) => {
   try {
@@ -85,7 +85,7 @@ export const uploadPointsByFile = async (req: Request, res: Response) => {
     let content: string;
 
     try {
-      content = await extractTextFromFile(tempPath, mimetype);
+      content = await extractFile(tempPath, mimetype);
     } catch (error) {
       console.error("Error parsing file:", error);
       res.status(409).json({ message: "Unsupported file type." });
@@ -138,18 +138,50 @@ export const uploadPointsByFile = async (req: Request, res: Response) => {
   }
 };
 
-export const uploadPointsByWebsite = async (req: Request, res: Response) => {
-  const parsedWebsite = websiteSchema.safeParse(req.body.website);
-  if (!parsedWebsite.success) {
-    res.status(400).json({ message: "Request Parsing Error" });
+export const uploadPointsByWebpage = async (req: Request, res: Response) => {
+  const parsedUrl = urlSchema.safeParse(req.body.url);
+  if (!parsedUrl.success) {
+    res.status(400).json({ message: "Invalid URL." });
     return;
   }
 
-  const { data } = parsedWebsite;
+  const { data } = parsedUrl;
 
   try {
-    const content = await scrapeWebsite(data);
-    res.status(200).json(content);
+    console.log("Scraping website.");
+    const result = await scrapeWebsite(data, true);
+    console.log("Scraped website.");
+    const parsedResult = {
+      url: result.url,
+      content: result.content + "...\n",
+    };
+
+    res.status(200).json(parsedResult);
+  } catch (error) {
+    console.error("Error uploading points by webpage:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const uploadPointsByWebsite = async (req: Request, res: Response) => {
+  const parsedUrl = urlSchema.safeParse(req.body.url);
+  if (!parsedUrl.success) {
+    res.status(400).json({ message: "Invalid URL." });
+    return;
+  }
+
+  const { data } = parsedUrl;
+
+  try {
+    const results = await scrapeWebsite(data, false);
+    const parsedResults = results.map((result) => {
+      return {
+        url: result.url,
+        content: result.content.slice(0, 300) + "...\n",
+      };
+    });
+
+    res.status(200).json(parsedResults);
   } catch (error) {
     console.error("Error uploading points by website:", error);
     res.status(500).json({ message: "Internal Server Error" });

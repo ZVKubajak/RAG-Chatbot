@@ -4,6 +4,7 @@ import {
   getAllPoints,
   getPointById,
   uploadPointsByFile,
+  uploadPointsByWebpage,
   uploadPointsByWebsite,
 } from "../../controllers/pointController";
 
@@ -17,6 +18,9 @@ router.get("/:id", getPointById);
 
 // Upload point via file.
 router.post("/file", upload.single("file"), uploadPointsByFile);
+
+// Upload points via webpage.
+router.post("/webpage", uploadPointsByWebpage);
 
 // Upload points via website.
 router.post("/website", uploadPointsByWebsite);
