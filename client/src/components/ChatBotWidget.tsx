@@ -14,6 +14,7 @@ const ChatbotWidget = () => {
   const [inputValue, setInputValue] = useState("");
   const [showFileModal, setShowFileModal] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [file, setFile] = useState<FileList | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = () => {
@@ -70,16 +71,17 @@ const ChatbotWidget = () => {
     if (!files || files.length === 0) return;
     const file = files[0];
 
-    try {
-      (async () => {
+    (async () => {
+      try {
         await uploadPointsByFile(file);
-      })();
-    } catch (error) {
-      console.error("[ChatBotWidget.tsx] handleFile Error:", error);
-      alert("An error occurred. Please try again later.");
-    } finally {
-      setShowFileModal(false);
-    }
+        alert("File uploaded!");
+      } catch (error) {
+        console.error("[ChatBotWidget.tsx] handleFile Error:", error);
+        alert("An error occurred. Please try again later.");
+      } finally {
+        setShowFileModal(false);
+      }
+    })();
   };
 
   const FileModal = () => (
@@ -109,7 +111,7 @@ const ChatbotWidget = () => {
           <p className="text-gray-600 mb-4">Drag and drop your file here, or</p>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium cursor-pointer"
           >
             Browse Files
           </button>
@@ -118,13 +120,24 @@ const ChatbotWidget = () => {
             type="file"
             multiple={false}
             className="hidden"
-            onChange={(e) => handleFile(e.target.files)}
+            onChange={(e) => setFile(e.target.files)}
           />
         </div>
 
         <p className="text-sm text-gray-500 mt-4 text-center">
           Supported formats: PDF, TXT, CSV, XLS, etc.
         </p>
+
+        {file && (
+          <div className="flex justify-center mt-5">
+            <button
+              className="cursor-pointer bg-purple-600 text-white px-4 py-2 rounded-md"
+              onClick={() => handleFile(file)}
+            >
+              Upload {file[0].name}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
