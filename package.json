@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/ZVKubajak/rag-chatbot#readme",
   "devDependencies": {
-    "concurrently": "^9.2.0"
+    "concurrently": "^9.2.0",
+    "wait-on": "^8.0.3"
   }
 }
