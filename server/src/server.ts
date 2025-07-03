@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import qdrant, { collectionName } from "./config/qdrant";
+import qdrant, { collectionName } from "./configs/qdrant";
 import routes from "./routes/index";
 
 dotenv.config();
