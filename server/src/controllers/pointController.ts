@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from "uuid";
 import { Payload } from "../schema/payloadSchema";
 import { idSchema } from "../schema/idSchema";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import websiteSchema from "../schema/websiteSchema";
+import scrapeWebsite from "../helpers/scrapeWebsite";
 
 export const getAllPoints = async (_req: Request, res: Response) => {
   try {
@@ -66,7 +68,7 @@ export const getPointById = async (req: Request, res: Response) => {
   }
 };
 
-export const uploadPoint = async (req: Request, res: Response) => {
+export const uploadPointsByFile = async (req: Request, res: Response) => {
   if (!req.file) {
     res.status(400).json({ message: "No file uploaded." });
     return;
@@ -114,7 +116,7 @@ export const uploadPoint = async (req: Request, res: Response) => {
       const payload: Payload = {
         content: doc.pageContent,
         chars: doc.pageContent.length,
-        family: {
+        file: {
           name: originalname,
           type: mimetype,
           size,
@@ -131,7 +133,25 @@ export const uploadPoint = async (req: Request, res: Response) => {
     const upsertResponse = await qdrant.upsert(collectionName, { points });
     res.status(201).json(upsertResponse);
   } catch (error) {
-    console.error("Error uploading point:", error);
+    console.error("Error uploading points by file:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const uploadPointsByWebsite = async (req: Request, res: Response) => {
+  const parsedWebsite = websiteSchema.safeParse(req.body.website);
+  if (!parsedWebsite.success) {
+    res.status(400).json({ message: "Request Parsing Error" });
+    return;
+  }
+
+  const { data } = parsedWebsite;
+
+  try {
+    const content = await scrapeWebsite(data);
+    res.status(200).json(content);
+  } catch (error) {
+    console.error("Error uploading points by website:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

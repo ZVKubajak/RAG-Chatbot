@@ -11,12 +11,12 @@ export const chat = async (req: Request, res: Response) => {
     return;
   }
 
-  const question = parsedPrompt.data;
+  const { data } = parsedPrompt;
 
   try {
     const queryEmbedding = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: parsedPrompt.data,
+      input: data,
     });
 
     const vector = queryEmbedding.data[0].embedding;
@@ -47,7 +47,7 @@ export const chat = async (req: Request, res: Response) => {
             - Do not answer questions about people not mentioned in any snippet.
             - Be concise and factual.`,
         },
-        { role: "user", content: `Question: ${question}` },
+        { role: "user", content: `Question: ${data}` },
         ...contextSnippets.map((context, i) => ({
           role: "user" as const,
           content: `Context Snippet #${i + 1}:\n\n${context}`,
