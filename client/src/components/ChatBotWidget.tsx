@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, Paperclip, Send, X, RefreshCcw } from "lucide-react";
-import FileModal from "./FileModal";
+import { MessageCircle, Paperclip, RefreshCcw, Send, X } from "lucide-react";
 import { chat } from "../services/api/aiServices";
+import FileModal from "./FileModal";
 
 type Message = {
   id: number;
@@ -27,9 +27,7 @@ const ChatbotWidget = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async () => {
@@ -58,6 +56,7 @@ const ChatbotWidget = () => {
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("[ChatBotWidget.tsx] handleSendMessage Error:", error);
+
       const errorMessage: Message = {
         id: Date.now() + 1,
         text: "Something went wrong. Please try again.",

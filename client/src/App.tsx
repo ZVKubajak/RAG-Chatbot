@@ -1,9 +1,13 @@
 import { ArrowRight, Sparkles, Zap, Heart } from "lucide-react";
 import ChatbotWidget from "./components/ChatBotWidget";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+
+      <ToastContainer />
+
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 md:p-8">
         <div className="flex items-center space-x-2">

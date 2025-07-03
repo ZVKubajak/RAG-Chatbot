@@ -5,6 +5,7 @@ import {
   uploadPointsByWebpage,
   uploadPointsByWebsite,
 } from "../services/api/pointServices";
+import { toast } from "react-toastify";
 
 type FileModalProps = {
   setShowFileModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,10 +53,10 @@ const FileModal = ({ setShowFileModal }: FileModalProps) => {
     setIsUploading(true);
     try {
       await uploadPointsByFile(selected);
-      alert("File uploaded successfully!");
+      toast("File uploaded successfully!", { type: "success" });
     } catch (error) {
       console.error("[FileModal.tsx] handleFileUpload Error:", error);
-      alert("An error occurred. Please try again later.");
+      toast("An error occurred. Please try again.", { type: "error" });
     } finally {
       setIsUploading(false);
       setShowFileModal(false);
@@ -73,14 +74,15 @@ const FileModal = ({ setShowFileModal }: FileModalProps) => {
         await uploadPointsByWebsite(url);
       }
 
-      alert(
+      toast(
         `${
           importMode === "webpage" ? "Webpage" : "Website"
-        } imported successfully!`
+        } imported successfully!`,
+        { type: "success" }
       );
     } catch (error) {
       console.error(`[FileModal.tsx] handleUrl Error:`, error);
-      alert("An error occurred. Please try again later.");
+      toast("An error occurred. Please try again.", { type: "error" });
     } finally {
       setUrl("");
       setIsUploading(false);
