@@ -1,42 +1,66 @@
 import { useState, useRef } from "react";
 import { MessageCircle, Paperclip, Send, Upload, X } from "lucide-react";
 import { uploadPointsByFile } from "../services/api/pointServices";
+import { chat } from "../services/api/aiServices";
+
+type Message = {
+  id: number;
+  text: string;
+  isBot: boolean;
+};
 
 const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       text: "Hi! I'm here to help you. How can I assist you today?",
       isBot: true,
     },
   ]);
+
   const [inputValue, setInputValue] = useState("");
   const [showFileModal, setShowFileModal] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<FileList | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = () => {
-    if (inputValue.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        text: inputValue,
-        isBot: false,
-      };
-      setMessages([...messages, newMessage]);
-      setInputValue("");
+    if (inputValue.trim() === "") return;
+    let messageCount = messages.length;
 
-      // Simulate bot response
-      setTimeout(() => {
-        const botResponse = {
-          id: messages.length + 2,
-          text: "Thanks for your message! I'm processing your request...",
-          isBot: true,
-        };
-        setMessages((prev) => [...prev, botResponse]);
-      }, 1000);
-    }
+    const userMessage: Message = {
+      id: (messageCount += 1),
+      text: inputValue,
+      isBot: false,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+
+    (async () => {
+      try {
+        const response = await chat(inputValue);
+        const botMessage: Message =
+          response === null
+            ? {
+                id: (messageCount += 1),
+                text: "Something went wrong. Please try again.",
+                isBot: true,
+              }
+            : {
+                id: (messageCount += 1),
+                text: response,
+                isBot: true,
+              };
+
+        setMessages((prev) => [...prev, botMessage]);
+      } catch (error) {
+        console.error("[ChatBotWidget.tsx] handleSendMessage Error:", error);
+        alert(error);
+      }
+    })();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

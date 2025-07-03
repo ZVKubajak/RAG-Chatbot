@@ -5,7 +5,7 @@ import promptSchema from "../schemas/promptSchema";
 import payloadSchema from "../schemas/payloadSchema";
 
 export const chat = async (req: Request, res: Response) => {
-  const parsedPrompt = promptSchema.safeParse(req.body.question);
+  const parsedPrompt = promptSchema.safeParse(req.body.prompt);
   if (!parsedPrompt.success) {
     res.status(400).json({ message: "Request Parsing Error" });
     return;
