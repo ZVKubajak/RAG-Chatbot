@@ -15,7 +15,7 @@ export const chat = async (req: Request, res: Response) => {
 
   try {
     const queryEmbedding = await openai.embeddings.create({
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-small",
       input: data,
     });
 

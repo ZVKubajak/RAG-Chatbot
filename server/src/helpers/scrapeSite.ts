@@ -65,6 +65,7 @@ async function scrapeSite(url: string, single: boolean): Promise<any> {
             continue;
           }
 
+          contentHashes.add(hash);
           scraped.push({ url, content: cleanedText });
         } catch (error) {
           console.warn(`Unable to scrape ${url}:`, error);

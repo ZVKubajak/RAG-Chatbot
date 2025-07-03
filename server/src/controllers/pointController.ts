@@ -148,15 +148,40 @@ export const uploadPointsByWebpage = async (req: Request, res: Response) => {
   const { data } = parsedUrl;
 
   try {
-    console.log("Scraping website.");
-    const result = await scrapeWebsite(data, true);
-    console.log("Scraped website.");
-    const parsedResult = {
-      url: result.url,
-      content: result.content + "...\n",
-    };
+    const { url, content } = await scrapeWebsite(data, true);
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+      keepSeparator: true,
+    });
 
-    res.status(200).json(parsedResult);
+    const docs = await splitter.createDocuments([content]);
+    const points = [];
+
+    for (const doc of docs) {
+      const embeddingResponse = await openai.embeddings.create({
+        model: "text-embedding-3-small",
+        input: doc.pageContent,
+      });
+
+      const vector = embeddingResponse.data[0].embedding;
+      const id = uuidv4();
+
+      const payload: Payload = {
+        content: doc.pageContent,
+        chars: doc.pageContent.length,
+        url,
+      };
+
+      points.push({
+        id,
+        vector,
+        payload,
+      });
+    }
+
+    const upsertResponse = await qdrant.upsert(collectionName, { points });
+    res.status(200).json(upsertResponse);
   } catch (error) {
     console.error("Error uploading points by webpage:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -174,14 +199,42 @@ export const uploadPointsByWebsite = async (req: Request, res: Response) => {
 
   try {
     const results = await scrapeWebsite(data, false);
-    const parsedResults = results.map((result) => {
-      return {
-        url: result.url,
-        content: result.content.slice(0, 300) + "...\n",
-      };
-    });
+    const points = [];
 
-    res.status(200).json(parsedResults);
+    for (const { url, content } of results) {
+      const splitter = new RecursiveCharacterTextSplitter({
+        chunkSize: 1000,
+        chunkOverlap: 200,
+        keepSeparator: true,
+      });
+
+      const docs = await splitter.createDocuments([content]);
+
+      for (const doc of docs) {
+        const embeddingResponse = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: doc.pageContent,
+        });
+
+        const vector = embeddingResponse.data[0].embedding;
+        const id = uuidv4();
+
+        const payload: Payload = {
+          content: doc.pageContent,
+          chars: doc.pageContent.length,
+          url,
+        };
+
+        points.push({
+          id,
+          vector,
+          payload,
+        });
+      }
+    }
+
+    const upsertResponse = await qdrant.upsert(collectionName, { points });
+    res.status(200).json(upsertResponse);
   } catch (error) {
     console.error("Error uploading points by website:", error);
     res.status(500).json({ message: "Internal Server Error" });

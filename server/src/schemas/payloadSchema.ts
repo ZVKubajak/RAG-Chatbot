@@ -12,6 +12,7 @@ const payloadSchema = z.object({
       size: z.number().int().nonnegative(),
     })
     .optional(),
+  url: z.string().url().max(200).optional(),
 });
 
 export default payloadSchema;
