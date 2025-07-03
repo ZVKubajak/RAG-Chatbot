@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import qdrant, { collectionName } from "../config/qdrant";
-import openai from "../config/openai";
-import promptSchema from "../schema/promptSchema";
-import payloadSchema from "../schema/payloadSchema";
+import qdrant, { collectionName } from "../configs/qdrant";
+import openai from "../configs/openai";
+import promptSchema from "../schemas/promptSchema";
+import payloadSchema from "../schemas/payloadSchema";
 
 export const chat = async (req: Request, res: Response) => {
   const parsedPrompt = promptSchema.safeParse(req.body.question);

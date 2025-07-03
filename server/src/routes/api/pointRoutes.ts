@@ -1,5 +1,5 @@
 import { Router } from "express";
-import upload from "../../config/upload";
+import upload from "../../configs/upload";
 import {
   getAllPoints,
   getPointById,
