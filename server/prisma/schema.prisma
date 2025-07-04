@@ -6,3 +6,48 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Client {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  tier      Tier      @default(STANDARD)
+  usage     Usage
+  limits    Limits
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Session   Session[]
+}
+
+enum Tier {
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+}
+
+type Usage {
+  messages    Int      @default(0)
+  tokensUsed  Int      @default(0)
+  storageUsed Int      @default(0)
+  lastReset   DateTime @default(now())
+}
+
+type Limits {
+  messageLimit Int @default(500) // 500 messages
+  tokenLimit   Int @default(100000) // 100K tokens
+  storageLimit Int @default(20000000) // 20MB
+}
+
+model Session {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  clientId   String    @db.ObjectId
+  client     Client    @relation(fields: [clientId], references: [id])
+  messages   Message[]
+  wasHelpful Boolean
+  timestamp  DateTime  @default(now())
+}
+
+type Message {
+  id      Int
+  content String
+  isBot   Boolean
+}
