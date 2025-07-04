@@ -28,6 +28,7 @@
     "@types/pdf-parse": "^1.1.5",
     "dotenv": "^17.0.1",
     "nodemon": "^3.1.10",
+    "prisma": "^6.11.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
