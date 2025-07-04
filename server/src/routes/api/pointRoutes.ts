@@ -6,7 +6,7 @@ import {
   uploadPointsByFile,
   uploadPointsByWebpage,
   uploadPointsByWebsite,
-} from "../../controllers/pointController";
+} from "../../controllers/api/pointController";
 
 const router = Router();
 

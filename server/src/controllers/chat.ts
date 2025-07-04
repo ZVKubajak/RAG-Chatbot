@@ -4,7 +4,7 @@ import openai from "../configs/openai";
 import promptSchema from "../schemas/promptSchema";
 import payloadSchema from "../schemas/payloadSchema";
 
-export const chat = async (req: Request, res: Response) => {
+const chat = async (req: Request, res: Response) => {
   const parsedPrompt = promptSchema.safeParse(req.body.prompt);
   if (!parsedPrompt.success) {
     res.status(400).json({ message: "Request Parsing Error" });
@@ -65,3 +65,5 @@ export const chat = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export default chat;

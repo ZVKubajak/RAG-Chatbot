@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
-import qdrant, { collectionName } from "../configs/qdrant";
-import openai from "../configs/openai";
+import qdrant, { collectionName } from "../../configs/qdrant";
+import openai from "../../configs/openai";
 import os from "os";
 import fs from "fs/promises";
 import path from "path";
-import extractFile from "../helpers/extractFile";
-import scrapeWebsite from "../helpers/scrapeSite";
+import extractFile from "../../helpers/extractFile";
+import scrapeWebsite from "../../helpers/scrapeSite";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { v4 as uuidv4 } from "uuid";
-import { Payload } from "../schemas/payloadSchema";
-import { idSchema } from "../schemas/idSchema";
-import urlSchema from "../schemas/urlSchema";
+import { Payload } from "../../schemas/payloadSchema";
+import { idSchema } from "../../schemas/idSchema";
+import urlSchema from "../../schemas/urlSchema";
 
 export const getAllPoints = async (_req: Request, res: Response) => {
   try {
