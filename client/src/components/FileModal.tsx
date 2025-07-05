@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
 import { Globe, Trash, Upload, X } from "lucide-react";
-import { uploadPointsByFile } from "../services/api/pointServices";
 import {
-  uploadPointsByWebpage,
-  uploadPointsByWebsite,
+  uploadFile,
+  uploadWebpage,
+  uploadWebsite,
 } from "../services/api/pointServices";
 import { toast } from "react-toastify";
 
@@ -52,7 +52,7 @@ const FileModal = ({ setShowFileModal }: FileModalProps) => {
     const selected = file[0];
     setIsUploading(true);
     try {
-      await uploadPointsByFile(selected);
+      await uploadFile(selected);
       toast("File uploaded successfully!", { type: "success" });
     } catch (error) {
       console.error("[FileModal.tsx] handleFileUpload Error:", error);
@@ -68,11 +68,8 @@ const FileModal = ({ setShowFileModal }: FileModalProps) => {
     setIsUploading(true);
 
     try {
-      if (importMode === "webpage") {
-        await uploadPointsByWebpage(url);
-      } else {
-        await uploadPointsByWebsite(url);
-      }
+      if (importMode === "webpage") await uploadWebpage(url);
+      else await uploadWebsite(url);
 
       toast(
         `${

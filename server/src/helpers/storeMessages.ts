@@ -22,7 +22,7 @@ const storeMessages = async (
       },
     });
 
-    await prisma.session.upsert({
+    const session = await prisma.session.upsert({
       where: { id: sessionId },
       create: {
         clientId,
@@ -40,14 +40,12 @@ const storeMessages = async (
         },
       },
     });
+
+    return session.id;
   } catch (error) {
     console.error("Error storing messages:", error);
     throw error;
   }
 };
-
-export const storeUserMessage = async () => {};
-
-export const storeAIMessage = async () => {};
 
 export default storeMessages;

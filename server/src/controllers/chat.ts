@@ -65,9 +65,14 @@ const chat = async (req: Request, res: Response) => {
     if (!message || !tokens)
       throw new Error("AI message and/or token usage not available.");
 
-    await storeMessages(data.prompt, message, tokens, data.sessionId);
+    const sessionId = await storeMessages(
+      data.prompt,
+      message,
+      tokens,
+      data.sessionId
+    );
 
-    res.status(200).json(message);
+    res.status(200).json({ message, sessionId });
   } catch (error) {
     console.log("Error AI chat:", error);
     res.status(500).json({ message: "Internal Server Error" });

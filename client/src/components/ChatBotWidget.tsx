@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, Paperclip, RefreshCcw, Send, X } from "lucide-react";
-import { chat } from "../services/api/aiServices";
+import chat from "../services/chat";
 import FileModal from "./FileModal";
 
 type Message = {

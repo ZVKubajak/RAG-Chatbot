@@ -1,6 +1,6 @@
 import api from "../api";
 
-export const uploadPointsByFile = async (file: File) => {
+export const uploadFile = async (file: File) => {
   try {
     const data = new FormData();
     data.append("file", file);
@@ -11,12 +11,12 @@ export const uploadPointsByFile = async (file: File) => {
       },
     });
   } catch (error) {
-    console.error("[services] uploadPointsByFile Error:", error);
+    console.error("[services] uploadFile Error:", error);
     throw error;
   }
 };
 
-export const uploadPointsByWebpage = async (url: string) => {
+export const uploadWebpage = async (url: string) => {
   try {
     await api.post(
       "/points/webpage",
@@ -28,12 +28,12 @@ export const uploadPointsByWebpage = async (url: string) => {
       }
     );
   } catch (error) {
-    console.error("[services] uploadPointsByWebpage Error:", error);
+    console.error("[services] uploadWebpage Error:", error);
     throw error;
   }
 };
 
-export const uploadPointsByWebsite = async (url: string) => {
+export const uploadWebsite = async (url: string) => {
   try {
     await api.post(
       "/points/website",
@@ -45,7 +45,7 @@ export const uploadPointsByWebsite = async (url: string) => {
       }
     );
   } catch (error) {
-    console.error("[services] uploadPointsByWebsite Error:", error);
+    console.error("[services] uploadWebsite Error:", error);
     throw error;
   }
 };
