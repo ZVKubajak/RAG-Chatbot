@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Payload } from "../../schemas/payloadSchema";
 import urlSchema from "../../schemas/urlSchema";
 
-export const uploadPointsByFile = async (req: Request, res: Response) => {
+export const uploadFile = async (req: Request, res: Response) => {
   if (!req.file) {
     res.status(400).json({ message: "No file uploaded." });
     return;
@@ -81,7 +81,7 @@ export const uploadPointsByFile = async (req: Request, res: Response) => {
   }
 };
 
-export const uploadPointsByWebpage = async (req: Request, res: Response) => {
+export const uploadWebpage = async (req: Request, res: Response) => {
   const parsedUrl = urlSchema.safeParse(req.body.url);
   if (!parsedUrl.success) {
     res.status(400).json({ message: "Invalid URL." });
@@ -131,7 +131,7 @@ export const uploadPointsByWebpage = async (req: Request, res: Response) => {
   }
 };
 
-export const uploadPointsByWebsite = async (req: Request, res: Response) => {
+export const uploadWebsite = async (req: Request, res: Response) => {
   const parsedUrl = urlSchema.safeParse(req.body.url);
   if (!parsedUrl.success) {
     res.status(400).json({ message: "Invalid URL." });
