@@ -39,7 +39,7 @@ type Limits {
 
 model Session {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  clientId   String    @db.ObjectId
+  clientId   String    @unique @db.ObjectId
   client     Client    @relation(fields: [clientId], references: [id])
   messages   Message[]
   wasHelpful Boolean?
@@ -47,7 +47,6 @@ model Session {
 }
 
 type Message {
-  id      Int
-  content String
-  isBot   Boolean
+  text  String
+  isBot Boolean
 }
