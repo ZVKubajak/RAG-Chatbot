@@ -9,64 +9,7 @@ import scrapeWebsite from "../../helpers/scrapeSite";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { v4 as uuidv4 } from "uuid";
 import { Payload } from "../../schemas/payloadSchema";
-import { idSchema } from "../../schemas/idSchema";
 import urlSchema from "../../schemas/urlSchema";
-
-export const getAllPoints = async (_req: Request, res: Response) => {
-  try {
-    const allPoints = [];
-    let hasMore = true;
-    let offset;
-
-    while (hasMore) {
-      const { points, next_page_offset } = await qdrant.scroll(collectionName, {
-        limit: 1000,
-        with_payload: true,
-        with_vector: true,
-      });
-
-      offset = next_page_offset;
-      hasMore = !!offset;
-      allPoints.push(...points);
-    }
-
-    if (allPoints.length === 0) {
-      res.status(404).json({ message: "No datasets found." });
-      return;
-    }
-
-    res.status(200).json({ count: allPoints.length, points: allPoints });
-  } catch (error) {
-    console.error("Error fetching all points:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const getPointById = async (req: Request, res: Response) => {
-  const parsedId = idSchema.safeParse(req.params.id);
-  if (!parsedId.success) {
-    res.status(400).json({ message: "Request Parsing Error" });
-    return;
-  }
-
-  try {
-    const points = await qdrant.retrieve(collectionName, {
-      ids: [parsedId.data],
-      with_payload: true,
-      with_vector: true,
-    });
-
-    if (points.length === 0) {
-      res.status(404).json({ message: "Point not found." });
-      return;
-    }
-
-    res.status(200).json(points[0]);
-  } catch (error) {
-    console.error("Error fetching point by ID:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
 
 export const uploadPointsByFile = async (req: Request, res: Response) => {
   if (!req.file) {

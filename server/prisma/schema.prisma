@@ -13,9 +13,9 @@ model Client {
   tier      Tier      @default(STANDARD)
   usage     Usage
   limits    Limits
+  Session   Session[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Session   Session[]
 }
 
 enum Tier {
