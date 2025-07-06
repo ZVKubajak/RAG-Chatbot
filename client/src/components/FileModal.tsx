@@ -4,7 +4,7 @@ import {
   uploadFile,
   uploadWebpage,
   uploadWebsite,
-} from "../services/api/pointServices";
+} from "../services/api/uploadServices";
 import { toast } from "react-toastify";
 
 type FileModalProps = {

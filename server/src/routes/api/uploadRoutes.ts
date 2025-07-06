@@ -17,4 +17,4 @@ router.post("/webpage", uploadWebpage);
 // Create vector points via website upload.
 router.post("/website", uploadWebsite);
 
-export { router as pointRouter };
+export { router as uploadRouter };

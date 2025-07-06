@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { pointRouter } from "./uploadRoutes";
+import { uploadRouter } from "./uploadRoutes";
+import usageLimit from "../../middlewares/usageLimit";
 
 const router = Router();
 
-router.use("/points", pointRouter);
+router.use("/uploads", usageLimit, uploadRouter);
 
 export default router;

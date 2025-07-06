@@ -10,7 +10,7 @@ const rateLimit = async (req: Request, res: Response, next: NextFunction) => {
 
     const count = await redis.incr(key);
     if (count === 1) {
-      await redis.expire(key, 60 * 60); // 1 hour
+      await redis.expire(key, 3600);
     } else if (count >= 20) {
       res.status(429).json({ message: "Message limit reached." });
       return;
