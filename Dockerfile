@@ -4,6 +4,10 @@ WORKDIR /app
 
 COPY . .
 
+RUN chown -R pptruser:pptruser /app
+
+USER pptruser
+
 RUN npm run install
 RUN npm run build
 
