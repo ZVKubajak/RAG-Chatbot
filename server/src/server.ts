@@ -19,10 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), "../client/dist")));
 app.use(routes);
 
-// app.get("*", (_req, res) => {
-//   res.sendFile(path.join(process.cwd(), "../client/dist/index.html"));
-// });
-
 const initializeCollection = async () => {
   try {
     const collections = await qdrant.getCollections();
