@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY . .
 
+USER root
 RUN chown -R pptruser:pptruser /app
 
 USER pptruser
