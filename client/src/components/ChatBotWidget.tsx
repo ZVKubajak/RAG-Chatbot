@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, Paperclip, RefreshCcw, Send, X } from "lucide-react";
+import { toast } from "react-toastify";
 import chat from "../services/chat";
 import FileModal from "./FileModal";
 
@@ -30,7 +31,6 @@ const ChatbotWidget = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    console.log("SESSION ID:", sessionId);
     if (inputValue.trim() === "" || isLoading) return;
 
     const userMessageText = inputValue.trim();
@@ -49,6 +49,17 @@ const ChatbotWidget = () => {
         prompt: userMessageText,
         sessionId: sessionId ?? undefined,
       });
+
+      if (response === "rate-limit") {
+        toast(
+          "You've reached the message limit for now. Please try again in an hour.",
+          { type: "warning" }
+        );
+        return;
+      } else if (response === "error") {
+        toast("An error occurred. Please try again.", { type: "error" });
+        return;
+      }
 
       const botMessage: Message = {
         text: response.message,

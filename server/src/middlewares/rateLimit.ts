@@ -3,7 +3,6 @@ import redis from "../configs/redis";
 
 const rateLimit = async (req: Request, res: Response, next: NextFunction) => {
   const ip = req.ip;
-  console.log("IP:", ip);
 
   try {
     if (!ip) throw new Error("IP not found.");
@@ -12,7 +11,7 @@ const rateLimit = async (req: Request, res: Response, next: NextFunction) => {
     const count = await redis.incr(key);
     if (count === 1) {
       await redis.expire(key, 60 * 60); // 1 hour
-    } else if (count >= 5) {
+    } else if (count >= 20) {
       res.status(429).json({ message: "Message limit reached." });
       return;
     }
