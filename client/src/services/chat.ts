@@ -10,7 +10,7 @@ type Response = {
   sessionId: string;
 };
 
-const url = "http://localhost:3001/chat";
+const url = "https://rag-chatbot-production-ffa2.up.railway.app/chat";
 
 const chat = async (data: Request) => {
   try {
