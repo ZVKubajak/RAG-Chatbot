@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import qdrant, { collectionName } from "./configs/qdrant";
+import redis from "./configs/redis";
 import routes from "./routes/index";
 
 dotenv.config();
@@ -40,6 +41,7 @@ const initializeCollection = async () => {
 
 const startServer = async () => {
   await initializeCollection();
+  await redis.connect();
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}.`);
