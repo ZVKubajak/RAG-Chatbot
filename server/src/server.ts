@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import qdrant, { collectionName } from "./configs/qdrant";
+import redis from "./configs/redis";
 import routes from "./routes/index";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT!;
+
+app.set("trust proxy", true);
 
 app.use(cors());
 app.use(express.json());
@@ -40,6 +43,7 @@ const initializeCollection = async () => {
 
 const startServer = async () => {
   await initializeCollection();
+  await redis.connect();
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}.`);

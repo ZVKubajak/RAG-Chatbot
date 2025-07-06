@@ -1,22 +1,23 @@
 import { Request, Response } from "express";
 import qdrant, { collectionName } from "../configs/qdrant";
 import openai from "../configs/openai";
-import promptSchema from "../schemas/promptSchema";
+import chatSchema from "../schemas/chatSchema";
 import payloadSchema from "../schemas/payloadSchema";
+import storeMessages from "../helpers/storeMessages";
 
-export const chat = async (req: Request, res: Response) => {
-  const parsedPrompt = promptSchema.safeParse(req.body.prompt);
-  if (!parsedPrompt.success) {
+const chat = async (req: Request, res: Response) => {
+  const parsedReq = chatSchema.safeParse(req.body);
+  if (!parsedReq.success) {
     res.status(400).json({ message: "Request Parsing Error" });
     return;
   }
 
-  const { data } = parsedPrompt;
+  const { data } = parsedReq;
 
   try {
     const queryEmbedding = await openai.embeddings.create({
       model: "text-embedding-3-small",
-      input: data,
+      input: data.prompt,
     });
 
     const vector = queryEmbedding.data[0].embedding;
@@ -59,9 +60,23 @@ export const chat = async (req: Request, res: Response) => {
       ],
     });
 
-    res.status(200).json(response.choices[0].message.content);
+    const message = response.choices[0].message.content;
+    const tokens = response.usage?.total_tokens;
+    if (!message || !tokens)
+      throw new Error("AI message and/or token usage not available.");
+
+    const sessionId = await storeMessages(
+      data.prompt,
+      message,
+      tokens,
+      data.sessionId
+    );
+
+    res.status(200).json({ message, sessionId });
   } catch (error) {
     console.log("Error AI chat:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export default chat;
