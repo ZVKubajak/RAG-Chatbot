@@ -2,14 +2,9 @@ FROM ghcr.io/puppeteer/puppeteer:latest
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY server/package*.json ./server/
-COPY client/package*.json ./client/
-
-RUN npm run install
-
 COPY . .
 
+RUN npm run install
 RUN npm run build
 
 EXPOSE 3001
