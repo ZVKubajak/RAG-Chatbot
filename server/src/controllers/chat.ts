@@ -33,24 +33,19 @@ const chat = async (req: Request, res: Response) => {
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
           content: `
-           You are a helpful assistant for a counseling service. You can only answer questions using the provided context snippets.
+           You are a helpful assistant. You can only answer questions using the provided context snippets.
 
           Guidelines:
           - If a question is clearly about a person or topic mentioned in the snippets, respond with accurate, helpful information.
-          - If the question is off-topic or not supported by the snippets, kindly say you don't have enough information *and* offer to help connect the user to the counselor.
+          - If the question is off-topic or not supported by the snippets, kindly say you don't have enough information.
           - Never guess, infer, or make up facts that aren't in the snippets.
-          - If the question is inappropriate, calmly decline to answer but still offer help with counseling-related needs.
-          - Speak with warmth and clarity. Be kind and professional, not robotic.
-
-          If needed, you can suggest this contact info:
-          - **Email:** tosharollins@uccasc.com
-          - **Phone:** (864) 835-8409
-          - **Hours:** Tuesday–Thursday, 10:00 am–5:00 pm (Easley, SC)`,
+          - If the question is inappropriate, calmly decline to answer.
+          - Speak with warmth and clarity. Be kind and professional, not robotic.`,
         },
         { role: "user", content: `Question: ${data}` },
         ...contextSnippets.map((context, i) => ({
