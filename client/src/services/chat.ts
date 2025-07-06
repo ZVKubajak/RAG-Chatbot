@@ -15,13 +15,9 @@ const url = "http://localhost:3001/chat";
 const chat = async (data: Request) => {
   try {
     const response = await axios.post<Response>(url, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      validateStatus: () => true,
+      headers: { "Content-Type": "application/json" },
     });
 
-    if (response.status !== 200) return null;
     return response.data;
   } catch (error) {
     console.error("[services] AI Chatbot Error:", error);

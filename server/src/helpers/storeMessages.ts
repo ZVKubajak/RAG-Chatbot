@@ -22,24 +22,30 @@ const storeMessages = async (
       },
     });
 
-    const session = await prisma.session.upsert({
-      where: { id: sessionId },
-      create: {
-        clientId,
-        messages: [
-          { text: userMessage, isBot: false },
-          { text: AIMessage, isBot: true },
-        ],
-      },
-      update: {
-        messages: {
-          push: [
+    let session;
+    if (sessionId) {
+      session = await prisma.session.update({
+        where: { id: sessionId },
+        data: {
+          messages: {
+            push: [
+              { text: userMessage, isBot: false },
+              { text: AIMessage, isBot: true },
+            ],
+          },
+        },
+      });
+    } else {
+      session = await prisma.session.create({
+        data: {
+          clientId,
+          messages: [
             { text: userMessage, isBot: false },
             { text: AIMessage, isBot: true },
           ],
         },
-      },
-    });
+      });
+    }
 
     return session.id;
   } catch (error) {

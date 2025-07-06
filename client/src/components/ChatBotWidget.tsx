@@ -4,14 +4,12 @@ import chat from "../services/chat";
 import FileModal from "./FileModal";
 
 type Message = {
-  id: number;
   text: string;
   isBot: boolean;
 };
 
 const defaultMessage = [
   {
-    id: 1,
     text: "Hi! I'm here to help you. How can I assist you today?",
     isBot: true,
   },
@@ -19,6 +17,7 @@ const defaultMessage = [
 
 const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>(defaultMessage);
   const [inputValue, setInputValue] = useState("");
   const [showFileModal, setShowFileModal] = useState(false);
@@ -31,6 +30,7 @@ const ChatbotWidget = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
+    console.log("SESSION ID:", sessionId);
     if (inputValue.trim() === "" || isLoading) return;
 
     const userMessageText = inputValue.trim();
@@ -38,7 +38,6 @@ const ChatbotWidget = () => {
     setIsLoading(true);
 
     const userMessage: Message = {
-      id: Date.now(),
       text: userMessageText,
       isBot: false,
     };
@@ -46,22 +45,26 @@ const ChatbotWidget = () => {
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await chat(userMessageText);
+      const response = await chat({
+        prompt: userMessageText,
+        sessionId: sessionId ?? undefined,
+      });
+
       const botMessage: Message = {
-        id: Date.now() + 1,
-        text: response || "Something went wrong. Please try again.",
+        text: response.message,
         isBot: true,
       };
 
       setMessages((prev) => [...prev, botMessage]);
+      setSessionId(response.sessionId);
     } catch (error) {
       console.error("[ChatBotWidget.tsx] handleSendMessage Error:", error);
 
       const errorMessage: Message = {
-        id: Date.now() + 1,
         text: "Something went wrong. Please try again.",
         isBot: true,
       };
+
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -124,7 +127,7 @@ const ChatbotWidget = () => {
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => (
               <div
-                key={message.id}
+                key={index}
                 ref={index === messages.length - 1 ? messagesEndRef : null}
                 className={`flex ${
                   message.isBot ? "justify-start" : "justify-end"
