@@ -7,11 +7,11 @@
     "start": "npm run client:build && npm run server",
     "start:dev": "concurrently \"npm run server:dev\" \"wait-on tcp:3001 && npm run client:dev\"",
     "client:build": "cd client && npm run build",
-    "server": "cd server && npm start && cd ..",
+    "server": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
     "client:dev": "cd client && npm run dev",
     "install": "cd server && npm i && cd ../client && npm i",
-    "build": "npm install && cd server && npm run build"
+    "build": "cd server && npm run build"
   },
   "repository": {
     "type": "git",
