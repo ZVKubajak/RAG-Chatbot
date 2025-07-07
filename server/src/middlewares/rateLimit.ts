@@ -3,7 +3,6 @@ import redis from "../configs/redis";
 
 const rateLimit = async (req: Request, res: Response, next: NextFunction) => {
   const ip = req.ip;
-  console.log("IP:", ip);
 
   try {
     if (!ip) throw new Error("IP not found.");

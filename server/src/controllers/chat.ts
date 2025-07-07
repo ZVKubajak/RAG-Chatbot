@@ -32,22 +32,22 @@ const chat = async (req: Request, res: Response) => {
       return parsedPayload.content;
     });
 
+    console.log("SNIPPET COUNT:", contextSnippets.length);
+    console.log("USER'S PROMPT:", data.prompt);
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
           content: `
-           You are a helpful assistant. You can only answer questions using the provided context snippets.
-
-          Guidelines:
-          - If a question is clearly about a person or topic mentioned in the snippets, respond with accurate, helpful information.
-          - If the question is off-topic or not supported by the snippets, kindly say you don't have enough information.
-          - Never guess, infer, or make up facts that aren't in the snippets.
-          - If the question is inappropriate, calmly decline to answer.
-          - Speak with warmth and clarity. Be kind and professional, not robotic.`,
+           You are a helpful chatbot assistant.
+           
+           Only answer using the context snippets provided. Do not guess or invent any information.
+           If the answer is not clearly stated in the context, tell the user you don't have enough information for that.
+           NEVER reference the existence of context snippets in your response.`,
         },
-        { role: "user", content: `Question: ${data}` },
+        { role: "user", content: `User's Prompt: ${data.prompt}` },
         ...contextSnippets.map((context, i) => ({
           role: "user" as const,
           content: `Context Snippet #${i + 1}:\n\n${context}`,
